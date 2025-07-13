@@ -12,7 +12,6 @@
     # Build the app
     RUN mvn clean package -DskipTests
     
-    # -------- STAGE 2: Run the JAR --------
     FROM eclipse-temurin:17-jdk
     
     WORKDIR /app
