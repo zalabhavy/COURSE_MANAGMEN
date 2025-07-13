@@ -3,23 +3,26 @@
     # Install Maven
     RUN apt-get update && apt-get install -y maven
     
+    # Create app directory
     WORKDIR /app
     
-    # Copy all project files
+    # Copy everything into the image
     COPY . .
     
-    # Build the application
+    # Build the app
     RUN mvn clean package -DskipTests
     
-    # -------- STAGE 2: Run the app --------
+    # -------- STAGE 2: Run the JAR --------
     FROM eclipse-temurin:17-jdk
     
     WORKDIR /app
     
-    # Copy JAR from previous stage
+    # Copy only the JAR from build stage
     COPY --from=build /app/target/*.jar app.jar
     
-    EXPOSE 8080
+    # Expose the port your app runs on
+    EXPOSE 8089
     
+    # Run the app
     ENTRYPOINT ["java", "-jar", "app.jar"]
     
