@@ -1,12 +1,15 @@
     FROM eclipse-temurin:17-jdk AS build
 
+    # Install Maven
+    RUN apt-get update && apt-get install -y maven
+    
     WORKDIR /app
     
     # Copy all project files
     COPY . .
     
     # Build the application
-    RUN ./mvnw clean package -DskipTests
+    RUN mvn clean package -DskipTests
     
     # -------- STAGE 2: Run the app --------
     FROM eclipse-temurin:17-jdk
