@@ -3,25 +3,26 @@
     # Install Maven
     RUN apt-get update && apt-get install -y maven
     
-    # Create app directory
+    # Set working directory
     WORKDIR /app
     
-    # Copy everything into the image
+    # Copy all files into the image
     COPY . .
     
-    # Build the app
+    # Build the Spring Boot project
     RUN mvn clean package -DskipTests
     
     FROM eclipse-temurin:17-jdk
     
+    # Set working directory
     WORKDIR /app
     
-    # Copy only the JAR from build stage
+    # Copy the jar from the build stage
     COPY --from=build /app/target/*.jar app.jar
     
     # Expose the port your app runs on
-    EXPOSE 8089
+    EXPOSE 8080
     
-    # Run the app
+    # Run the jar
     ENTRYPOINT ["java", "-jar", "app.jar"]
     
