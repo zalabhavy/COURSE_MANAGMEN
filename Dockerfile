@@ -1,14 +1,22 @@
-# Use Eclipse Temurin OpenJDK base image
-FROM eclipse-temurin:17-jdk
+    FROM eclipse-temurin:17-jdk AS build
 
-# Set working directory inside container
-WORKDIR /app
-
-# Copy the built jar file into the container
-COPY target/CURD_API-0.0.1-SNAPSHOT.jar app.jar
-
-# Expose the port your Spring Boot app runs on
-EXPOSE 8089
-
-# Command to run the app
-ENTRYPOINT ["java", "-jar", "app.jar"]
+    WORKDIR /app
+    
+    # Copy all project files
+    COPY . .
+    
+    # Build the application
+    RUN ./mvnw clean package -DskipTests
+    
+    # -------- STAGE 2: Run the app --------
+    FROM eclipse-temurin:17-jdk
+    
+    WORKDIR /app
+    
+    # Copy JAR from previous stage
+    COPY --from=build /app/target/*.jar app.jar
+    
+    EXPOSE 8080
+    
+    ENTRYPOINT ["java", "-jar", "app.jar"]
+    
